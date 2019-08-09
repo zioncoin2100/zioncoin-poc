@@ -1,0 +1,96 @@
+branches:
+  only:
+    - main
+matrix:
+  fast_finish: true
+  allow_failures:
+  - env: ALLOW_FAILURES=1
+  include:
+  - language: ruby
+    ruby: 2.3
+    script:
+      - ruby check-markdown-links.rb
+  - language: go
+    go: 1.11
+    install: true
+    env: ALLOW_FAILURES=1
+    before_script:
+      - go vet ./slidechain/...
+      - test `gofmt -s -l ./slidechain | grep -vF /vendor/ | wc -l` -eq 0
+    script:
+      - go test -v ./slidechain/... -timeout 60m
+  - language: rust
+    rust: nightly-2019-07-31
+    # per https://levans.fr/rust_travis_cache.html
+    cache:
+      directories:
+        - /home/travis/.cargo
+    before_cache:
+      - rm -rf /home/travis/.cargo/registry
+    before_script:
+    - cd zkvm
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt --all -- --check
+    - cargo test
+    - RUSTFLAGS="-C opt-level=0" cargo bench "DONOTMATCHANYBENCHMARK"
+  - language: rust
+    rust: nightly-2019-07-31
+    # per https://levans.fr/rust_travis_cache.html
+    cache:
+      directories:
+        - /home/travis/.cargo
+    before_cache:
+      - rm -rf /home/travis/.cargo/registry
+    before_script:
+    - cd spacesuit
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt --all -- --check
+    - cargo test
+    - RUSTFLAGS="-C opt-level=0" cargo bench "DONOTMATCHANYBENCHMARK"
+  - language: rust
+    rust: nightly-2019-07-31
+    # per https://levans.fr/rust_travis_cache.html
+    cache:
+      directories:
+        - /home/travis/.cargo
+    before_cache:
+      - rm -rf /home/travis/.cargo/registry
+    before_script:
+    - cd keytree
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt --all -- --check
+    - cargo test
+    - RUSTFLAGS="-C opt-level=0" cargo bench "DONOTMATCHANYBENCHMARK"
+  - language: rust
+    rust: nightly-2019-07-31
+    # per https://levans.fr/rust_travis_cache.html
+    cache:
+      directories:
+        - /home/travis/.cargo
+    before_cache:
+      - rm -rf /home/travis/.cargo/registry
+    before_script:
+    - cd token
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt --all -- --check
+    - cargo test
+    - RUSTFLAGS="-C opt-level=0" cargo bench "DONOTMATCHANYBENCHMARK"
+  - language: rust
+    rust: nightly-2019-07-31
+    # per https://levans.fr/rust_travis_cache.html
+    cache:
+      directories:
+        - /home/travis/.cargo
+    before_cache:
+      - rm -rf /home/travis/.cargo/registry
+    before_script:
+    - cd accounts
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt --all -- --check
+    - cargo test
+    - RUSTFLAGS="-C opt-level=0" cargo bench "DONOTMATCHANYBENCHMARK"
